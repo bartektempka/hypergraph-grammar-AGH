@@ -156,3 +156,57 @@ class TestProd0:
         # Act & Assert
         # pylint: disable=protected-access
         assert prod0._check_cycle(hg, cycle) is False
+
+    def test_rfc_mechanism_rejects_refinement_when_false(self):
+        """Test that an RFC returning False prevents the production from applying."""
+        # Arrange
+        hg = Hypergraph()
+        hg.add_edge(Edge(EdgeType.E, frozenset({"A", "B"})))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"B", "C"})))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"C", "D"})))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"D", "A"})))
+        hg.add_edge(Edge(EdgeType.Q, frozenset({"A", "B", "C", "D"}), {"R": 0}))
+
+        class RejectRFC:
+            def is_valid(self, edge, hypergraph, meta=None):
+                return False
+
+        prod0 = Prod0(rfc=RejectRFC())
+
+        # Act
+        result = prod0.apply(hg)
+
+        # Assert
+        assert result is None
+
+    def test_rfc_mechanism_allows_refinement_when_set_on_hypergraph(self):
+        """Test that setting an RFC on the Hypergraph allows refinement accordingly."""
+        # Arrange
+        hg = Hypergraph()
+        hg.add_edge(Edge(EdgeType.E, frozenset({"A", "B"})))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"B", "C"})))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"C", "D"})))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"D", "A"})))
+        hg.add_edge(Edge(EdgeType.Q, frozenset({"A", "B", "C", "D"}), {"R": 0}))
+
+        class AllowRFC:
+            def is_valid(self, edge, hypergraph, meta=None):
+                return True
+
+        hg.set_rfc(AllowRFC())
+
+        prod0 = Prod0()
+
+        # Act
+        result = prod0.apply(hg)
+
+        # Assert
+        assert result is not None
+
+        # pylint: disable=protected-access
+        q_edges_r1 = [
+            e
+            for e in result.get_edges()
+            if e.get_type() == EdgeType.Q and e.get_parameters().get("R") == 1
+        ]
+        assert len(q_edges_r1) == 1

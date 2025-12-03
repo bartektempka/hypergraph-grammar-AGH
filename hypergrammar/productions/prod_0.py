@@ -1,17 +1,23 @@
 import itertools
+from typing import Optional
 
 from hypergrammar.productions.i_prod import IProd
 from hypergrammar.hypergraph import Hypergraph
 from hypergrammar.edge import Edge, EdgeType
 from hypergrammar.utils import canonical_rotation
+from hypergrammar.rfc import RFC
 
 
 class Prod0(IProd):
+
+    def __init__(self, rfc: Optional[RFC] = None):
+        self._rfc = rfc
+        super().__init__()
+
     def apply(self, graph: Hypergraph) -> Hypergraph | None:
         hg_edges = graph.get_edges()
 
         # Find evry Q edge with R=0
-
         q_edges = []
         for edge in hg_edges:
             if edge.get_type() == EdgeType.Q and edge.get_parameters().get("R") == 0:
@@ -41,6 +47,10 @@ class Prod0(IProd):
             if not cycle_matches:
                 continue
 
+            # valid edge found -> check refinement criterion (rfc)
+            if not self._validate_edge(q_edge, graph):
+                continue
+
             new_q_edge = Edge(
                 edge_type=EdgeType.Q,
                 vertices=q_edge_vertices,
@@ -55,6 +65,18 @@ class Prod0(IProd):
             return new_graph
 
         return None
+
+    def _validate_edge(self, q_edge: Edge, graph: Hypergraph) -> bool:
+        if self._rfc is not None:
+            return self._rfc.is_valid(q_edge, graph)
+
+        res = graph.edge_rfc_is_valid(q_edge)
+
+        # no rfc was found
+        if res is None:
+            return True
+
+        return res
 
     def _e_edges_match(self, graph: Hypergraph, edges_vertices: frozenset[str]) -> bool:
         for edge in graph.get_edges():

@@ -1,11 +1,19 @@
+from typing import Optional, Mapping, Any
+
 import xgi
+
 from hypergrammar.edge import Edge
+from hypergrammar.rfc import RFC
 
 
 class Hypergraph:
-    def __init__(self) -> None:
+    def __init__(self, rfc: Optional[RFC] = None) -> None:
+        """Create a Hypergraph.
+        Optionally pass an `rfc` implementing `RFC` protocol
+        """
         self._edges: frozenset[Edge] = frozenset()
         self._node_parameters: dict[str, dict[str, int]] = {}
+        self._rfc: Optional[RFC] = rfc
 
     def add_edge(self, edge: Edge) -> None:
         self._edges = self._edges.union(frozenset([edge]))
@@ -15,6 +23,22 @@ class Hypergraph:
 
     def set_vertex_parameter(self, vertex: str, parameter: dict[str, int]) -> None:
         self._node_parameters[vertex] = parameter
+
+    def set_rfc(self, rfc: Optional[RFC]) -> None:
+        self._rfc = rfc
+
+    def get_rfc(self) -> Optional[RFC]:
+        return self._rfc
+
+    def edge_rfc_is_valid(
+        self, edge: Edge, meta: Optional[Mapping[str, Any]] = None
+    ) -> Optional[bool]:
+        if self._rfc is None:
+            # if no rfc provided function returns None
+            # to distinguish from invalid criterion
+            return None
+
+        return bool(self._rfc.is_valid(edge, self, meta))
 
     def get_edges(self) -> frozenset[Edge]:
         return self._edges

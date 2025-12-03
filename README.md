@@ -10,7 +10,7 @@ source .venv/bin/activate
 
 ### Install Dependencies
 ```bash
-pip install xgi pytest mypy black pylint
+pip install xgi pytest mypy black pylint shapely
 ```
 
 ## Development Commands
