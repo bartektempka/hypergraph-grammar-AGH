@@ -4,6 +4,8 @@ from enum import Enum, auto
 class EdgeType(Enum):
     E = auto()
     Q = auto()
+    S = auto()
+    T = auto()
 
 
 class Edge:
