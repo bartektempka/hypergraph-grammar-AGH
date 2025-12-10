@@ -47,7 +47,7 @@ class Prod4(IProd):
                 v2 = graph.get_vertex_parameters(vvv[1])
             
             
-            graph.set_vertex_parameter(new_v, {"x": v1["x"] + v2["x"]/2 , "y":  v1["y"] + v2["y"]/2})
+            graph.set_vertex_parameter(new_v, {"x": (v1["x"] + v2["x"])/2 , "y":  (v1["y"] + v2["y"])/2})
             new_edges = [ ]
             
             for v in e_edge_vertices:
