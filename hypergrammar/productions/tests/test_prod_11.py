@@ -1,6 +1,7 @@
 from hypergrammar.hypergraph import Hypergraph
 from hypergrammar.edge import Edge, EdgeType
 from hypergrammar.productions.prod_11 import Prod11
+import pytest
 
 
 class TestProd11:
@@ -164,6 +165,17 @@ class TestProd11:
         
         # Assert
         assert result is None
+
+    def test_apply_with_s_edge_wrong_vertex_count_raises(self):
+        """S edge with vertex count other than 6 should raise ValueError."""
+        hg = Hypergraph()
+        # S edge on 5 vertices instead of 6
+        hg.add_edge(Edge(EdgeType.S, frozenset({"A", "B", "C", "D", "E"}), {"R": 1}))
+
+        prod11 = Prod11()
+
+        with pytest.raises(ValueError):
+            prod11.apply(hg)
 
     def test_check_all_edges_broken_valid(self):
         """Test _check_all_edges_broken with all edges properly broken."""
