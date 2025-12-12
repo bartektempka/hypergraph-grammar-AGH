@@ -34,6 +34,9 @@ class Prod1(IProd):
                     f"Q edge must connect exactly 4 vertices, but got {len(q_edge_vertices)}"
                 )
 
+            if not self._validate_edge(q_edge, graph):
+                continue
+
             unique_cycles = set()
             for perm in itertools.permutations(q_edge_vertices):
                 unique_cycles.add(canonical_rotation(list(perm)))
