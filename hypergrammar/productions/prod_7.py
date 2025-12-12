@@ -82,13 +82,6 @@ class Prod7:
                             boundary_edges: Set[Edge]) -> Hypergraph:
         """Constructs the new hypergraph with updated R parameters."""
         new_hg = Hypergraph(rfc=original_hg.get_rfc())
-        
-        # Copy node parameters
-        # (Assuming we can iterate keys or just copy known vertices from edges)
-        # Since Hypergraph stores params in a dict, we can try to copy them if accessible, 
-        # or re-set them based on vertices in edges. 
-        # Accessing private _node_parameters directly for deep copy simulation:
-        # pylint: disable=protected-access
         new_hg._node_parameters = copy.deepcopy(original_hg._node_parameters)
 
         # Process edges
