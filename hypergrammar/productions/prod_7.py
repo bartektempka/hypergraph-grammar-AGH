@@ -20,7 +20,7 @@ class Prod7:
             e for e in hypergraph.get_edges()
             if e.get_type() == EdgeType.P 
             and len(e.get_vertices()) == 5
-            and e.get_parameters().get("R") == 1 #R0 = 1
+            and e.get_parameters().get("R") == 1
         ]
 
         for p_edge in candidate_edges:
@@ -75,6 +75,7 @@ class Prod7:
         # If we visited every node, it's a single connected cycle
         return len(visited) == len(vertices)
 
+# 0(N)
     def _apply_transformation(self, 
                             original_hg: Hypergraph, 
                             p_edge_match: Edge, 
@@ -103,3 +104,29 @@ class Prod7:
                 new_hg.add_edge(edge)
                 
         return new_hg
+    
+
+    # O(1) solution
+
+    # def _apply_transformation(self, 
+    #                         hypergraph: Hypergraph, # Note: we modify this object directly
+    #                         p_edge_match: Edge, 
+    #                         boundary_edges: Set[Edge]) -> Hypergraph:
+        
+    #     # We iterate only over the 5 boundary edges we found
+    #     for old_edge in boundary_edges:
+    #         # 1. Remove the old edge from the graph
+    #         # (Important: must happen before changing params if params are part of hash)
+    #         hypergraph.remove_edge(old_edge)
+            
+    #         # 2. Create the new edge
+    #         # (Or modify in place if your Edge class allows mutable params safely)
+    #         new_params = old_edge.get_parameters().copy()
+    #         new_params["R"] = 1
+    #         new_edge = Edge(old_edge.get_type(), old_edge.get_vertices(), new_params)
+            
+    #         # 3. Add the new edge
+    #         hypergraph.add_edge(new_edge)
+            
+    #     # We return the SAME hypergraph object, just modified
+    #     return hypergraph
