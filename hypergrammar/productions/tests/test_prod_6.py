@@ -19,7 +19,7 @@ class TestProd6:
         hg.add_edge(Edge(EdgeType.E, frozenset({"C", "D"})))
         hg.add_edge(Edge(EdgeType.E, frozenset({"D", "E"})))
         hg.add_edge(Edge(EdgeType.E, frozenset({"E", "A"})))
-        hg.add_edge(Edge(EdgeType.P, frozenset({"A", "B", "C", "D", "E"}), {"R": 67}))
+        hg.add_edge(Edge(EdgeType.P, frozenset({"A", "B", "C", "D", "E"}), {"R": 0}))
 
         prod0 = Prod6()
 
@@ -40,11 +40,10 @@ class TestProd6:
         assert len(q_edges_r1) == 1
         assert q_edges_r1[0].get_vertices() == frozenset({"A", "B", "C", "D", "E"})
 
-        # Check that P edge with R != 1 no longer exists
         q_edges_r0 = [
             e
             for e in edges
-            if e.get_type() == EdgeType.P and e.get_parameters().get("R") == 67
+            if e.get_type() == EdgeType.P and e.get_parameters().get("R") == 0
         ]
         assert len(q_edges_r0) == 0
 
@@ -80,7 +79,7 @@ class TestProd6:
         hg.add_edge(Edge(EdgeType.E, frozenset({"C", "D"})))
         hg.add_edge(Edge(EdgeType.E, frozenset({"D", "E"})))
         hg.add_edge(Edge(EdgeType.E, frozenset({"E", "A"})))
-        hg.add_edge(Edge(EdgeType.Q, frozenset({"A", "B", "C", "D", "E"}), {"R": 67}))
+        hg.add_edge(Edge(EdgeType.Q, frozenset({"A", "B", "C", "D", "E"}), {"R": 0}))
 
         prod0 = Prod6()
 
@@ -98,7 +97,7 @@ class TestProd6:
         hg.add_edge(Edge(EdgeType.E, frozenset({"B", "C"})))
         hg.add_edge(Edge(EdgeType.E, frozenset({"C", "D"})))
         hg.add_edge(Edge(EdgeType.E, frozenset({"D", "A"})))
-        hg.add_edge(Edge(EdgeType.P, frozenset({"A", "B", "C", "D"}), {"R": 67}))
+        hg.add_edge(Edge(EdgeType.P, frozenset({"A", "B", "C", "D"}), {"R": 0}))
 
         prod0 = Prod6()
 
@@ -122,7 +121,7 @@ class TestProd6:
         hg.add_edge(Edge(EdgeType.E, frozenset({"D", "A"})))
         hg.add_edge(Edge(EdgeType.E, frozenset({"E", "A"})))
 
-        hg.add_edge(Edge(EdgeType.P, frozenset({"A", "B", "C", "D", "E"}), {"R": 67}))
+        hg.add_edge(Edge(EdgeType.P, frozenset({"A", "B", "C", "D", "E"}), {"R": 0}))
 
         prod0 = Prod6()
 
@@ -142,7 +141,7 @@ class TestProd6:
         hg.add_edge(Edge(EdgeType.E, frozenset({"C", "D"})))
         hg.add_edge(Edge(EdgeType.E, frozenset({"D", "E"})))
         hg.add_edge(Edge(EdgeType.E, frozenset({"E", "A"})))
-        hg.add_edge(Edge(EdgeType.P, frozenset({"A", "B", "C", "D", "E"}), {"R": 67}))
+        hg.add_edge(Edge(EdgeType.P, frozenset({"A", "B", "C", "D", "E"}), {"R": 0}))
 
         class AllowRFC:
             def is_valid(self, edge, hypergraph, meta=None):

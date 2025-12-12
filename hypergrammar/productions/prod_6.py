@@ -19,8 +19,7 @@ class Prod6(IProd):
         # Find evry Q edge with R=0
         p_edges: List[Edge] = []
         for edge in hg_edges:
-            # TODO: Do not know if (R != 1) check is neccessary
-            if edge.get_type() == EdgeType.P and edge.get_parameters().get("R") != 1:
+            if edge.get_type() == EdgeType.P and edge.get_parameters().get("R") == 0:
                 p_edges.append(edge)
 
         if not p_edges:
