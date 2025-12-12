@@ -6,6 +6,7 @@ from hypergrammar.hypergraph import Hypergraph
 from hypergrammar.edge import Edge, EdgeType
 from hypergrammar.utils import canonical_rotation, generate_vertex_name
 from hypergrammar.rfc import RFC
+from copy import deepcopy
 
 
 class Prod4(IProd):
@@ -19,7 +20,7 @@ class Prod4(IProd):
         # Find evry Q edge with R=0
         e_edges = []
         for edge in hg_edges:
-            if edge.get_type() == EdgeType.E:
+            if edge.get_type() == EdgeType.E and "R" in edge.parameters and edge.parameters["R"] == 1 and "B" in edge.parameters and edge.parameters["B"] == 1:
                 e_edges.append(edge)
 
         if not e_edges:
@@ -32,7 +33,6 @@ class Prod4(IProd):
                 raise ValueError(
                     f"E edge must connect exactly 2 vertices, but got {len(e_edge_vertices)}"
                 )
-
 
             # valid edge found -> check refinement criterion (rfc)
             if not self._validate_edge(e_edge, graph):
@@ -54,8 +54,9 @@ class Prod4(IProd):
                 new_e_edge = Edge(
                     edge_type=EdgeType.E,
                     vertices=frozenset({v, new_v}),
-                    parameters={"R": 0},
+                    parameters=deepcopy(e_edge.get_parameters()),
                 )
+                new_e_edge.get_parameters()["R"] = 0
                 new_edges.append(new_e_edge)
             
             

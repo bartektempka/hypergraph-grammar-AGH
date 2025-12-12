@@ -12,8 +12,7 @@ class TestProd4:
         """Test that production returns None when there is no Q edge."""
         # Arrange
         hg = Hypergraph()
-        hg.add_edge(Edge(EdgeType.E, frozenset({"A", "B"})))
-        # hg.add_edge(Edge(EdgeType.E, frozenset({"B", "C"})))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"A", "B"}), {"R": 1, "B": 1}))
         hg.set_vertex_parameter("A", {"x": 1, "y": 1})
         hg.set_vertex_parameter("B", {"x": 0, "y": 0})
 
@@ -39,6 +38,39 @@ class TestProd4:
             print(hg.get_vertex_parameters(new_vert))
             assert hg.get_vertex_parameters(new_vert) == {'x': 0.5, "y" : 0.5}
             
+
+    def test_No_R(self):
+        # Arrange
+        hg = Hypergraph()
+        hg.add_edge(Edge(EdgeType.E, frozenset({"A", "B"}), {"B": 1}))
+        # hg.add_edge(Edge(EdgeType.E, frozenset({"B", "C"})))
+        hg.set_vertex_parameter("A", {"x": 1, "y": 1})
+        hg.set_vertex_parameter("B", {"x": 0, "y": 0})
+
+        prod0 = Prod4()
+        
+        # Act
+        result = prod0.apply(hg)
+
+        # Assert
+        assert result is None
+            
+
+    def test_B_zero(self):
+        # Arrange
+        hg = Hypergraph()
+        hg.add_edge(Edge(EdgeType.E, frozenset({"A", "B"}), {"R": 1, "B": 0}))
+        # hg.add_edge(Edge(EdgeType.E, frozenset({"B", "C"})))
+        hg.set_vertex_parameter("A", {"x": 1, "y": 1})
+        hg.set_vertex_parameter("B", {"x": 0, "y": 0})
+
+        prod0 = Prod4()
+        
+        # Act
+        result = prod0.apply(hg)
+
+        # Assert
+        assert result is None
     
     
         
@@ -60,7 +92,7 @@ class TestProd4:
     def test_raises_value_error_for_invalid_vertex_count(self):
         """Test that ValueError is raised if E edge connects 3 vertices instead of 2."""
         hg = Hypergraph()
-        hg.add_edge(Edge(EdgeType.E, frozenset({"A", "B", "C"})))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"A", "B", "C"}), {"R": 1, "B": 1}))
 
         prod4 = Prod4()
 
@@ -100,8 +132,8 @@ class TestProd4:
         """Test that if RFC rejects the first edge, production continues to the next one."""
         hg = Hypergraph()
 
-        edge_blocked = Edge(EdgeType.E, frozenset({"A", "B"}))
-        edge_allowed = Edge(EdgeType.E, frozenset({"C", "D"}))
+        edge_blocked = Edge(EdgeType.E, frozenset({"A", "B"}), {"R": 1, "B": 1})
+        edge_allowed = Edge(EdgeType.E, frozenset({"C", "D"}), {"R": 1, "B": 1})
 
         hg.add_edge(edge_blocked)
         hg.add_edge(edge_allowed)
@@ -127,7 +159,7 @@ class TestProd4:
     def test_new_edges_have_correct_parameters(self):
         """Test that newly created E edges have R=0 parameter."""
         hg = Hypergraph()
-        hg.add_edge(Edge(EdgeType.E, frozenset({"A", "B"})))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"A", "B"}), {"R": 1, "B": 1}))
         hg.set_vertex_parameter("A", {"x": 0, "y": 0})
         hg.set_vertex_parameter("B", {"x": 2, "y": 2})
 
