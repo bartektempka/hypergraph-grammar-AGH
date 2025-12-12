@@ -74,16 +74,16 @@ class Prod5(IProd):
             new_graph.remove_edge(q_edge)
             
             contral_vertex_name = self._generate_central_vertex_name(new_graph)
-            print("Central vertex:", contral_vertex_name)
+
             coords = self._get_central_vertex_position(new_graph, cycle)
 
             new_graph.set_vertex_parameter(contral_vertex_name, coords)
 
             for middle_vertex in middle_vertices:
-                print("Adding edge:", contral_vertex_name, middle_vertex)
                 new_edge = Edge(
-                    EdgeType.E,
-                    frozenset({middle_vertex, contral_vertex_name}),
+                    edge_type=EdgeType.E,
+                    vertices=frozenset({middle_vertex, contral_vertex_name}),
+                    parameters={"R": 0, "B": 0},
                 )
                 new_graph.add_edge(new_edge)
             
