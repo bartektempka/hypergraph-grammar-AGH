@@ -83,10 +83,12 @@ class Hypergraph:
                 pos=node_positions,
                 hyperedge_labels=edge_labels,
                 edge_fc=edge_colors,
+                dyad_color=edge_colors,
             )
         else:
             xgi.draw(
                 xgi_h,
                 hyperedge_labels=edge_labels,
                 edge_fc=edge_colors,
+                dyad_color=edge_colors,
             )

@@ -13,7 +13,11 @@ def generate_vertex_name() -> str:
 
 
 def get_edge_color(edge: Edge) -> str:
-    if edge.parameters.get("R") == 1:
+    if edge.parameters.get("R") == 1 and edge.parameters.get("B") == 1:
+        return "purple"
+    elif edge.parameters.get("R") == 1:
         return "red"
+    elif edge.parameters.get("B") == 1:
+        return "blue"
 
     return "black"
