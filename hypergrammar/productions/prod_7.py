@@ -12,28 +12,26 @@ class Prod7:
          These 5 vertices must form a pentagon cycle via edges of type E.
     RHS: The R parameter of all boundary E edges is set to 1.
     """
-    
+
     def apply(self, hypergraph: Hypergraph) -> Optional[Hypergraph]:
-        # 1. Find candidate P edges
-        # We look for type P, 5 vertices, and R=1
-        candidate_edges = [
-            e for e in hypergraph.get_edges()
-            if e.get_type() == EdgeType.P 
-            and len(e.get_vertices()) == 5
-            and e.get_parameters().get("R") == 1
-        ]
+            # Iterate through edges directly to find the first match
+            for edge in hypergraph.get_edges():
+                
+                # 1. Check if this specific edge is a candidate (P, 5 vertices, R=1)
+                if (edge.get_type() == EdgeType.P 
+                    and len(edge.get_vertices()) == 5
+                    and edge.get_parameters().get("R") == 1):
+                    
+                    # 2. Check topology immediately
+                    vertices = sorted(edge.get_vertices())
+                    boundary_edges = self._find_boundary_edges(hypergraph, vertices)
+                    
+                    # 3. If valid, apply transformation and return immediately (Stop looking)
+                    if len(boundary_edges) == 5 and self._is_cycle(vertices, boundary_edges):
+                        return self._apply_transformation(hypergraph, edge, boundary_edges)
 
-        for p_edge in candidate_edges:
-            vertices = p_edge.get_vertices()
-            
-            # 2. Check topology: Do these 5 vertices form a pentagon boundary of E edges?
-            boundary_edges = self._find_boundary_edges(hypergraph, vertices)
-            
-            # We need exactly 5 boundary edges forming a cycle
-            if len(boundary_edges) == 5 and self._is_cycle(vertices, boundary_edges):
-                return self._apply_transformation(hypergraph, p_edge, boundary_edges)
-
-        return None
+            # If we loop through everything and find nothing
+            return None
 
     def _find_boundary_edges(self, hypergraph: Hypergraph, vertices: frozenset[str]) -> Set[Edge]:
         """Finds all E-type edges that connect exactly 2 vertices within the given set."""
