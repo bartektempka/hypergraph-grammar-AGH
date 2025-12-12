@@ -71,8 +71,6 @@ class Prod5(IProd):
 
             new_graph = graph
 
-            print(middle_vertices)
-
             new_graph.remove_edge(q_edge)
             
             contral_vertex_name = self._generate_central_vertex_name(new_graph)

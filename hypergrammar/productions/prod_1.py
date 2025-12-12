@@ -56,10 +56,12 @@ class Prod1(IProd):
             new_edges = []
 
             for edge in edges:
+                new_params = dict(edge.get_parameters())
+                new_params["R"] = 1
                 new_edge = Edge(
                     edge_type=EdgeType.E,
                     vertices=edge.get_vertices(),
-                    parameters={"R": 1},
+                    parameters=new_params,
                 )
                 new_edges.append(new_edge)
 
