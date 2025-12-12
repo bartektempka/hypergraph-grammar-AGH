@@ -79,9 +79,8 @@ class Prod2(IProd):
                             v2_params = graph.get_vertex_parameters(vertex=v2)
                             v3_x = (v1_params["x"] + v2_params["x"]) / 2
                             v3_y = (v1_params["y"] + v2_params["y"]) / 2
-                            v3_z = (v1_params["z"] + v2_params["z"]) / 2
                             graph.set_vertex_parameter(
-                                v3, {"x": v3_x, "y": v3_y, "z": v3_z}
+                                v3, {"x": v3_x, "y": v3_y}
                             )
 
                             # set e2 and e3 B=0 and R=0
