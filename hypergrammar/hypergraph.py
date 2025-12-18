@@ -1,6 +1,7 @@
 from typing import Optional, Mapping, Any
 
 import xgi
+from matplotlib.axes import Axes
 
 from hypergrammar.edge import Edge
 from hypergrammar.rfc import RFC
@@ -47,7 +48,9 @@ class Hypergraph:
     def get_vertex_parameters(self, vertex: str) -> dict[str, int]:
         return self._node_parameters.get(vertex, {})
 
-    def draw(self, use_positional_parameters: bool = False) -> None:
+    def draw(
+        self, use_positional_parameters: bool = False, node_size: int = 15
+    ) -> Axes | Any:
         xgi_h = xgi.Hypergraph()
 
         edges_to_draw: list[frozenset[str]] = []
@@ -78,17 +81,21 @@ class Hypergraph:
             xgi_h.add_edge(edges_vertices, id=i)
 
         if use_positional_parameters:
-            xgi.draw(
+            return xgi.draw(
                 xgi_h,
                 pos=node_positions,
                 hyperedge_labels=edge_labels,
                 edge_fc=edge_colors,
                 dyad_color=edge_colors,
+                node_labels=True,
+                node_size=node_size,
             )
-        else:
-            xgi.draw(
-                xgi_h,
-                hyperedge_labels=edge_labels,
-                edge_fc=edge_colors,
-                dyad_color=edge_colors,
-            )
+
+        return xgi.draw(
+            xgi_h,
+            hyperedge_labels=edge_labels,
+            edge_fc=edge_colors,
+            dyad_color=edge_colors,
+            node_labels=True,
+            node_size=node_size,
+        )
