@@ -1,3 +1,5 @@
+import pytest
+
 from hypergrammar.hypergraph import Hypergraph
 from hypergrammar.edge import Edge, EdgeType
 from hypergrammar.productions.prod_12 import Prod12
@@ -243,3 +245,138 @@ class TestProd12:
             if e.get_type() == EdgeType.T and e.get_parameters().get("R") == 1
         ]
         assert len(t_edges_r1) == 1
+
+    def test_apply_with_t_edge_on_5_vertices_returns_none(self):
+        """
+        T edge incident with only 5 vertices (instead of 7) is treated as
+        an invalid element and causes ValueError.
+        """
+        hg = Hypergraph()
+        # 5-cycle A-B-C-D-E-A just to have some structure
+        hg.add_edge(Edge(EdgeType.E, frozenset({"A", "B"})))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"B", "C"})))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"C", "D"})))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"D", "E"})))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"E", "A"})))
+        # T-edge on 5 vertices with R=0
+        hg.add_edge(
+            Edge(EdgeType.T, frozenset({"A", "B", "C", "D", "E"}), {"R": 0})
+        )
+
+        prod12 = Prod12()
+
+        with pytest.raises(ValueError):
+            prod12.apply(hg)
+
+    def test_apply_with_t_edge_on_7_vertices_returns_none(self):
+        """
+        Even when T edge is incident with 7 vertices, production does not
+        apply if there is no 7-cycle on E-edges.
+        """
+        hg = Hypergraph()
+        # T-edge alone, no E-edges forming boundary
+        hg.add_edge(
+            Edge(
+                EdgeType.T,
+                frozenset({"A", "B", "C", "D", "E", "F", "G"}),
+                {"R": 0},
+            )
+        )
+
+        prod12 = Prod12()
+        result = prod12.apply(hg)
+
+        assert result is None
+
+    def test_apply_with_non_binary_e_edge_returns_none(self):
+        """
+        Production should not apply when edges along the boundary are not
+        all binary – here one of the cycle edges is a 3-vertex E edge.
+        """
+        hg = Hypergraph()
+        # Six proper binary edges
+        hg.add_edge(Edge(EdgeType.E, frozenset({"A", "B"})))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"B", "C"})))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"C", "D"})))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"D", "E"})))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"E", "F"})))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"F", "G"})))
+        # Non-binary "edge" instead of G-A
+        hg.add_edge(Edge(EdgeType.E, frozenset({"G", "A", "X"})))
+        # T-edge on 7 vertices with R=0
+        hg.add_edge(
+            Edge(
+                EdgeType.T,
+                frozenset({"A", "B", "C", "D", "E", "F", "G"}),
+                {"R": 0},
+            )
+        )
+
+        prod12 = Prod12()
+        result = prod12.apply(hg)
+
+        # There is no binary edge {G, A}, so 7-cycle cannot be formed
+        assert result is None
+
+    def test_rfc_mechanism_rejects_refinement_when_set_on_hypergraph(self):
+        """
+        RFC attached to the Hypergraph can prevent refinement when it
+        returns False for the candidate T edge.
+        """
+        hg = Hypergraph()
+        # valid 7-cycle
+        hg.add_edge(Edge(EdgeType.E, frozenset({"A", "B"})))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"B", "C"})))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"C", "D"})))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"D", "E"})))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"E", "F"})))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"F", "G"})))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"G", "A"})))
+        # T-edge on 7 vertices with R=0
+        hg.add_edge(
+            Edge(
+                EdgeType.T,
+                frozenset({"A", "B", "C", "D", "E", "F", "G"}),
+                {"R": 0},
+            )
+        )
+
+        class RejectRFC:
+            def is_valid(self, edge, hypergraph, meta=None):
+                return False
+
+        hg.set_rfc(RejectRFC())
+
+        prod12 = Prod12()
+        result = prod12.apply(hg)
+
+        assert result is None
+
+    def test_apply_with_extra_edge_raises_value_error(self):
+        """
+        Extra test for invalid T edge size: T incident with 6 vertices
+        instead of 7 causes ValueError.
+        """
+        hg = Hypergraph()
+        # 6-cycle just for context
+        hg.add_edge(Edge(EdgeType.E, frozenset({"A", "B"})))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"B", "C"})))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"C", "D"})))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"D", "E"})))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"E", "F"})))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"F", "A"})))
+        # T-edge with R=0 on only 6 vertices
+        hg.add_edge(
+            Edge(
+                EdgeType.T,
+                frozenset({"A", "B", "C", "D", "E", "F"}),
+                {"R": 0},
+            )
+        )
+        # an extra edge that does not add new vertices (doesn't matter for the error)
+        hg.add_edge(Edge(EdgeType.E, frozenset({"A", "C"})))
+
+        prod12 = Prod12()
+
+        with pytest.raises(ValueError):
+            prod12.apply(hg)
