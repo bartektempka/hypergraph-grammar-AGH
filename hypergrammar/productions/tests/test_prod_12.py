@@ -246,29 +246,7 @@ class TestProd12:
         ]
         assert len(t_edges_r1) == 1
 
-    def test_apply_with_t_edge_on_5_vertices_returns_none(self):
-        """
-        T edge incident with only 5 vertices (instead of 7) is treated as
-        an invalid element and causes ValueError.
-        """
-        hg = Hypergraph()
-        # 5-cycle A-B-C-D-E-A just to have some structure
-        hg.add_edge(Edge(EdgeType.E, frozenset({"A", "B"})))
-        hg.add_edge(Edge(EdgeType.E, frozenset({"B", "C"})))
-        hg.add_edge(Edge(EdgeType.E, frozenset({"C", "D"})))
-        hg.add_edge(Edge(EdgeType.E, frozenset({"D", "E"})))
-        hg.add_edge(Edge(EdgeType.E, frozenset({"E", "A"})))
-        # T-edge on 5 vertices with R=0
-        hg.add_edge(
-            Edge(EdgeType.T, frozenset({"A", "B", "C", "D", "E"}), {"R": 0})
-        )
-
-        prod12 = Prod12()
-
-        with pytest.raises(ValueError):
-            prod12.apply(hg)
-
-    def test_apply_with_t_edge_on_7_vertices_returns_none(self):
+    def test_apply_with_no_7_edge_cycle_returns_none(self):
         """
         Even when T edge is incident with 7 vertices, production does not
         apply if there is no 7-cycle on E-edges.
@@ -352,7 +330,7 @@ class TestProd12:
 
         assert result is None
 
-    def test_apply_with_extra_edge_raises_value_error(self):
+    def test_apply_with_wrong_vertice_count_raises_value_error(self):
         """
         Extra test for invalid T edge size: T incident with 6 vertices
         instead of 7 causes ValueError.
