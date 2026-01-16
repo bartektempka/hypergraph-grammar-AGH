@@ -99,3 +99,43 @@ class TestProd3(unittest.TestCase):
 
         result = self.prod.apply(hg)
         self.assertIsNone(result, "Incomplete coordinates should block production")
+    
+    def test_7_bigger_example(self):
+        """Test Prod3 on bigger graph"""
+        hg = Hypergraph()
+
+        # Outside edges
+        hg.add_edge(Edge(EdgeType.E, frozenset({"A", "B"}), {"R": 0, "B": 1}))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"B", "C"}), {"R": 0, "B": 1}))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"C", "D"}), {"R": 0, "B": 1}))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"D", "E"}), {"R": 0, "B": 1}))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"E", "F"}), {"R": 0, "B": 1}))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"F", "G"}), {"R": 0, "B": 1}))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"G", "H"}), {"R": 0, "B": 1}))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"H", "A"}), {"R": 0, "B": 1}))
+
+        # Inside edges, only two eligible for applying P3
+        hg.add_edge(Edge(EdgeType.E, frozenset({"I", "B"}), {"R": 0, "B": 0}))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"I", "D"}), {"R": 0, "B": 0}))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"I", "F"}), {"R": 1, "B": 0}))
+        hg.add_edge(Edge(EdgeType.E, frozenset({"I", "H"}), {"R": 1, "B": 0}))
+
+        # Vertices
+        hg.set_vertex_parameter("A", {"x": 0, "y": 0})
+        hg.set_vertex_parameter("B", {"x": 2, "y": 0})
+        hg.set_vertex_parameter("C", {"x": 4, "y": 0})
+        hg.set_vertex_parameter("D", {"x": 4, "y": 2})
+        hg.set_vertex_parameter("E", {"x": 4, "y": 4})
+        hg.set_vertex_parameter("F", {"x": 2, "y": 4})
+        hg.set_vertex_parameter("G", {"x": 0, "y": 4})
+        hg.set_vertex_parameter("H", {"x": 0, "y": 2})
+        hg.set_vertex_parameter("I", {"x": 2, "y": 2})
+
+        initial_edges_count = len(hg.get_edges())
+
+        result = self.prod.apply(hg)
+        self.assertIsNotNone(result, "P3 should be applied on the first time")
+        result = self.prod.apply(hg)
+        self.assertIsNotNone(result, "P3 should be applied on the second time")
+
+        self.assertEqual(len(result.get_edges()), initial_edges_count + 4)
