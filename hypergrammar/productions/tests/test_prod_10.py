@@ -12,7 +12,7 @@ class TestProd10():
         nodes = [f"v{i}" for i in range(6)]
         
         # Add Q (Center)
-        hg.add_edge(Edge(EdgeType.Q, frozenset(nodes), {"R": q_r}))
+        hg.add_edge(Edge(EdgeType.S, frozenset(nodes), {"R": q_r}))
         
         # Add E (Boundary)
         for i in range(6):
@@ -45,7 +45,7 @@ class TestProd10():
         # Arrange
         hg = Hypergraph()
         nodes = [f"v{i}" for i in range(6)]
-        hg.add_edge(Edge(EdgeType.Q, frozenset(nodes), {"R": 1}))
+        hg.add_edge(Edge(EdgeType.S, frozenset(nodes), {"R": 1}))
         
         # 3 edges have R=1, 3 edges have R=0
         for i in range(6):
@@ -92,7 +92,7 @@ class TestProd10():
         # Arrange
         hg = Hypergraph()
         nodes = [f"v{i}" for i in range(6)]
-        hg.add_edge(Edge(EdgeType.Q, frozenset(nodes), {"R": 1}))
+        hg.add_edge(Edge(EdgeType.S, frozenset(nodes), {"R": 1}))
         
         # Add only 5 edges (boundary broken)
         for i in range(5): 
@@ -112,7 +112,7 @@ class TestProd10():
         # Arrange
         hg = Hypergraph()
         nodes = [f"v{i}" for i in range(5)] # 5 nodes
-        hg.add_edge(Edge(EdgeType.Q, frozenset(nodes), {"R": 1}))
+        hg.add_edge(Edge(EdgeType.S, frozenset(nodes), {"R": 1}))
         
         # Add 5 boundary edges
         for i in range(5):

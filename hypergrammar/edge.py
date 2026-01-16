@@ -5,6 +5,7 @@ class EdgeType(Enum):
     E = auto()
     Q = auto()
     P = auto()
+    S = auto()
 
 
 class Edge:

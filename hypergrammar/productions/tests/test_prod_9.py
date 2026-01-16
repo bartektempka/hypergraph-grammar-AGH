@@ -12,7 +12,7 @@ class TestProd9():
         hg = Hypergraph()
         nodes = frozenset([f"v{i}" for i in range(6)])
         # Valid Q edge, 6 vertices, R=0
-        hg.add_edge(Edge(EdgeType.Q, nodes, {"R": 0}))
+        hg.add_edge(Edge(EdgeType.S, nodes, {"R": 0}))
 
         prod9 = Prod9() # Default RFC allows everything or is ignored depending on impl, assuming valid here
 
@@ -23,7 +23,7 @@ class TestProd9():
         assert result is not None, "Production should return a graph, not None"
         
         # Check Q edge state
-        q_edges = [e for e in result.get_edges() if e.get_type() == EdgeType.Q]
+        q_edges = [e for e in result.get_edges() if e.get_type() == EdgeType.S]
         assert len(q_edges) == 1
         assert q_edges[0].get_parameters()["R"] == 1, "R parameter should be updated to 1"
 
@@ -32,7 +32,7 @@ class TestProd9():
         # Arrange
         hg = Hypergraph()
         nodes = frozenset([f"v{i}" for i in range(6)])
-        hg.add_edge(Edge(EdgeType.Q, nodes, {"R": 1}))
+        hg.add_edge(Edge(EdgeType.S, nodes, {"R": 1}))
 
         prod9 = Prod9()
 
@@ -47,7 +47,7 @@ class TestProd9():
         # Arrange
         hg = Hypergraph()
         nodes = frozenset([f"v{i}" for i in range(5)]) # Pentagon
-        hg.add_edge(Edge(EdgeType.Q, nodes, {"R": 0}))
+        hg.add_edge(Edge(EdgeType.S, nodes, {"R": 0}))
 
         prod9 = Prod9()
 
@@ -62,7 +62,7 @@ class TestProd9():
         # Arrange
         hg = Hypergraph()
         nodes = frozenset([f"v{i}" for i in range(6)])
-        hg.add_edge(Edge(EdgeType.Q, nodes, {"R": 0}))
+        hg.add_edge(Edge(EdgeType.S, nodes, {"R": 0}))
 
         class RejectRFC:
             def is_valid(self, edge, graph, meta=None):
@@ -81,7 +81,7 @@ class TestProd9():
         # Arrange
         hg = Hypergraph()
         nodes = frozenset([f"v{i}" for i in range(6)])
-        hg.add_edge(Edge(EdgeType.Q, nodes, {"R": 0}))
+        hg.add_edge(Edge(EdgeType.S, nodes, {"R": 0}))
 
         class AcceptRFC:
             def is_valid(self, edge, graph, meta=None):

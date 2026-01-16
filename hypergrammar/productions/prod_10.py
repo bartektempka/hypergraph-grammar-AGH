@@ -9,7 +9,7 @@ class Prod10:
     def apply(self, graph: Hypergraph) -> Optional[Hypergraph]:
         q_edges = [
             e for e in graph.get_edges()
-            if e.get_type() == EdgeType.Q and e.get_parameters().get("R") == 1
+            if e.get_type() == EdgeType.S and e.get_parameters().get("R") == 1
         ]
 
         for q_edge in q_edges:

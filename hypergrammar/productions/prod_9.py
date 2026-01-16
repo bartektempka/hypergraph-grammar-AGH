@@ -11,7 +11,7 @@ class Prod9:
     def apply(self, graph: Hypergraph) -> Optional[Hypergraph]:
         candidates = [
             e for e in graph.get_edges()
-            if e.get_type() == EdgeType.Q and e.get_parameters().get("R", 0) == 0
+            if e.get_type() == EdgeType.S and e.get_parameters().get("R", 0) == 0
         ]
 
         for edge in candidates:
@@ -23,7 +23,7 @@ class Prod9:
 
             new_params = edge.get_parameters().copy()
             new_params["R"] = 1
-            new_edge = Edge(EdgeType.Q, edge.get_vertices(), new_params)
+            new_edge = Edge(EdgeType.S, edge.get_vertices(), new_params)
 
             graph.remove_edge(edge)
             graph.add_edge(new_edge)
