@@ -49,7 +49,7 @@ class Hypergraph:
         return self._node_parameters.get(vertex, {})
 
     def draw(
-        self, use_positional_parameters: bool = False, node_size: int = 15
+        self, use_positional_parameters: bool = False, node_size: int = 15, clean: bool = False
     ) -> Axes | Any:
         xgi_h = xgi.Hypergraph()
 
@@ -80,19 +80,12 @@ class Hypergraph:
         for i, edges_vertices in enumerate(edges_to_draw):
             xgi_h.add_edge(edges_vertices, id=i)
 
-        if use_positional_parameters:
-            return xgi.draw(
-                xgi_h,
-                pos=node_positions,
-                hyperedge_labels=edge_labels,
-                edge_fc=edge_colors,
-                dyad_color=edge_colors,
-                node_labels=True,
-                node_size=node_size,
-            )
+        if clean:
+            return xgi.draw(xgi_h, pos=node_positions if use_positional_parameters else None)
 
         return xgi.draw(
             xgi_h,
+            pos=node_positions if use_positional_parameters else None,
             hyperedge_labels=edge_labels,
             edge_fc=edge_colors,
             dyad_color=edge_colors,
