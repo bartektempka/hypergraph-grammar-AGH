@@ -13,25 +13,51 @@ class Prod7:
     RHS: The R parameter of all boundary E edges is set to 1.
     """
 
-    def apply(self, hypergraph: Hypergraph) -> Optional[Hypergraph]:
-            # Iterate through edges directly to find the first match
-            for edge in hypergraph.get_edges():
+    # def apply(self, hypergraph: Hypergraph) -> Optional[Hypergraph]:
+    #         # Iterate through edges directly to find the first match
+    #         for edge in hypergraph.get_edges():
                 
-                # 1. Check if this specific edge is a candidate (P, 5 vertices, R=1)
-                if (edge.get_type() == EdgeType.P 
-                    and len(edge.get_vertices()) == 5
-                    and edge.get_parameters().get("R") == 1):
+    #             # 1. Check if this specific edge is a candidate (P, 5 vertices, R=1)
+    #             if (edge.get_type() == EdgeType.P 
+    #                 and len(edge.get_vertices()) == 5
+    #                 and edge.get_parameters().get("R") == 1):
                     
-                    # 2. Check topology immediately
-                    vertices = sorted(edge.get_vertices())
-                    boundary_edges = self._find_boundary_edges(hypergraph, vertices)
+    #                 # 2. Check topology immediately
+    #                 vertices = sorted(edge.get_vertices())
+    #                 boundary_edges = self._find_boundary_edges(hypergraph, vertices)
                     
-                    # 3. If valid, apply transformation and return immediately (Stop looking)
-                    if len(boundary_edges) == 5 and self._is_cycle(vertices, boundary_edges):
-                        return self._apply_transformation(hypergraph, edge, boundary_edges)
+    #                 # 3. If valid, apply transformation and return immediately (Stop looking)
+    #                 if len(boundary_edges) == 5 and self._is_cycle(vertices, boundary_edges):
+    #                     return self._apply_transformation(hypergraph, edge, boundary_edges)
 
-            # If we loop through everything and find nothing
-            return None
+    #         # If we loop through everything and find nothing
+    #         return None
+
+    def apply(self, hypergraph: Hypergraph) -> Optional[Hypergraph]:
+        # Iterate through edges directly to find the first match
+        for edge in hypergraph.get_edges():
+            
+            # 1. Check if this specific edge is a candidate (P, 5 vertices, R=1)
+            if (edge.get_type() == EdgeType.P 
+                and len(edge.get_vertices()) == 5
+                and edge.get_parameters().get("R") == 1):
+
+                vertex_list = sorted(edge.get_vertices()) 
+                vertices_set = frozenset(vertex_list)
+                
+                boundary_edges = self._find_boundary_edges(hypergraph, vertices_set)
+                
+                if len(boundary_edges) == 5 and self._is_cycle(vertices_set, boundary_edges):
+                    already_refined = True
+                    for b_edge in boundary_edges:
+                        if b_edge.get_parameters().get("R", 0) != 1:
+                            already_refined = False
+                            break
+                    if already_refined:
+                        continue 
+                    return self._apply_transformation(hypergraph, edge, boundary_edges)
+        return None
+
 
     def _find_boundary_edges(self, hypergraph: Hypergraph, vertices: frozenset[str]) -> Set[Edge]:
         """Finds all E-type edges that connect exactly 2 vertices within the given set."""
