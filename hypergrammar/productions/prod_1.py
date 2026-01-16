@@ -55,6 +55,15 @@ class Prod1(IProd):
             edges = self._get_edges(graph, cycle)
             new_edges = []
 
+            edges_merked_to_refainement = 0
+
+            for edge in edges:
+                new_params = dict(edge.get_parameters())
+                edges_merked_to_refainement += new_params.get("R", 0)
+            
+            if edges_merked_to_refainement == 4:
+                continue
+
             for edge in edges:
                 new_params = dict(edge.get_parameters())
                 new_params["R"] = 1

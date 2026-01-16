@@ -2,11 +2,12 @@ from enum import Enum, auto
 
 
 class EdgeType(Enum):
-    E = auto()
-    Q = auto()
-    P = auto()
-    S = auto()
-
+  
+    E = auto() # E represent edges of the polygon
+    Q = auto() # Q represent interior nodes of quadrilateral elements
+    P = auto() # P represent interior nodes of pentagonal elements
+    S = auto() # S represent interior nodes of hexagonal elements
+    T = auto() # T represent interior nodes of septagonal elements
 
 class Edge:
     def __init__(
