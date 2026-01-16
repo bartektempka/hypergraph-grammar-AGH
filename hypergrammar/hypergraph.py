@@ -1,9 +1,11 @@
 from typing import Optional, Mapping, Any
 
 import xgi
+from matplotlib.axes import Axes
 
 from hypergrammar.edge import Edge
 from hypergrammar.rfc import RFC
+from hypergrammar.utils import get_edge_color
 
 
 class Hypergraph:
@@ -46,23 +48,27 @@ class Hypergraph:
     def get_vertex_parameters(self, vertex: str) -> dict[str, int]:
         return self._node_parameters.get(vertex, {})
 
-    def draw(self, use_positional_parameters: bool = False) -> None:
+    def draw(
+        self, use_positional_parameters: bool = False, node_size: int = 15
+    ) -> Axes | Any:
         xgi_h = xgi.Hypergraph()
 
         edges_to_draw: list[frozenset[str]] = []
-        pos = {}
+        node_positions = {}
         edge_labels = {}
+        edge_colors = {}
         for edge in self.get_edges():
             edge_labels[len(edges_to_draw)] = str(edge)
+            edge_colors[len(edges_to_draw)] = get_edge_color(edge)
             edges_to_draw.append(edge.get_vertices())
 
             if use_positional_parameters:
                 for node in edge.get_vertices():
-                    if node not in pos:
+                    if node not in node_positions:
                         if "x" in self.get_vertex_parameters(
                             node
                         ) and "y" in self.get_vertex_parameters(node):
-                            pos[node] = (
+                            node_positions[node] = (
                                 self.get_vertex_parameters(node)["x"],
                                 self.get_vertex_parameters(node)["y"],
                             )
@@ -70,10 +76,26 @@ class Hypergraph:
                             raise ValueError(
                                 "All vertices must have 'x' and 'y' params for positional drawing."
                             )
+
         for i, edges_vertices in enumerate(edges_to_draw):
             xgi_h.add_edge(edges_vertices, id=i)
 
         if use_positional_parameters:
-            xgi.draw(xgi_h, pos=pos, hyperedge_labels=edge_labels)
-        else:
-            xgi.draw(xgi_h, hyperedge_labels=edge_labels)
+            return xgi.draw(
+                xgi_h,
+                pos=node_positions,
+                hyperedge_labels=edge_labels,
+                edge_fc=edge_colors,
+                dyad_color=edge_colors,
+                node_labels=True,
+                node_size=node_size,
+            )
+
+        return xgi.draw(
+            xgi_h,
+            hyperedge_labels=edge_labels,
+            edge_fc=edge_colors,
+            dyad_color=edge_colors,
+            node_labels=True,
+            node_size=node_size,
+        )

@@ -2,10 +2,10 @@ from enum import Enum, auto
 
 
 class EdgeType(Enum):
+  
     E = auto() # E represent edges of the polygon
     Q = auto() # Q represent interior nodes of quadrilateral elements
     P = auto() # P represent interior nodes of pentagonal elements
-
 
 class Edge:
     def __init__(
@@ -26,6 +26,9 @@ class Edge:
 
     def get_parameters(self) -> dict[str, int]:
         return self.parameters
+
+    def set_parameter(self, param: str, value: int) -> None:
+        self.parameters[param] = value
 
     def __hash__(self) -> int:
         return hash((self.edge_type, self.vertices, frozenset(self.parameters.items())))
