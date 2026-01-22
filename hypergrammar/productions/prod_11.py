@@ -235,7 +235,8 @@ class Prod11(IProd):
         if count == len(cycle):
             avg_x = total_x / count
             avg_y = total_y / count
-            graph.set_vertex_parameter(central_vertex, {"x": int(avg_x), "y": int(avg_y)})
+            # REMOVED int() casting here:
+            graph.set_vertex_parameter(central_vertex, {"x": avg_x, "y": avg_y})
 
     def _find_intermediate_vertex(
         self, graph: Hypergraph, v1: str, v2: str, s_vertices: set[str]

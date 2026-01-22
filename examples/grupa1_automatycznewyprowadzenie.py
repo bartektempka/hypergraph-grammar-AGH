@@ -260,7 +260,7 @@ def main() -> None:
 
     final_hg = apply_all_productions_automatically(
         hg,
-        target_vertex="H",
+        target_vertex="C",
         depth=3,
         save_images=True,
         output_dir="./output"
