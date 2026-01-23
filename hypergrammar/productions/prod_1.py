@@ -61,7 +61,7 @@ class Prod1(IProd):
                 new_params = dict(edge.get_parameters())
                 edges_merked_to_refainement += new_params.get("R", 0)
             
-            if edges_merked_to_refainement == 4:
+            if edges_merked_to_refainement > 0:
                 continue
 
             for edge in edges:

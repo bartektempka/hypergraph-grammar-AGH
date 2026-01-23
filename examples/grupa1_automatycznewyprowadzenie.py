@@ -139,10 +139,11 @@ def apply_all_productions_automatically(
     ]
     
     # Temporary directory for storing frames for GIF
-    temp_dir = None
+    temp_dir = "output"
     frame_list = []
     if save_images:
-        temp_dir = tempfile.mkdtemp()
+        # temp_dir = tempfile.mkdtemp()
+        ...
 
     image_id = 0
     big_iteration = 0
@@ -236,7 +237,7 @@ def apply_all_productions_automatically(
             
             # Clean up temporary frames
             import shutil
-            shutil.rmtree(temp_dir)
+            # shutil.rmtree(temp_dir)
         except Exception as e:
             print(f"Error creating GIF: {e}")
 
@@ -260,7 +261,7 @@ def main() -> None:
 
     final_hg = apply_all_productions_automatically(
         hg,
-        target_vertex="C",
+        target_vertex="H",
         depth=3,
         save_images=True,
         output_dir="./output"
